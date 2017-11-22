@@ -33,12 +33,12 @@ describe('the JavaScript language', function() {
     });
 
     it('considers an empty string to be falsy', function() {
-      expect('' == true).toBeFalsy(); // Truthy or Falsy
+      expect('' == false).toBeTruthy(); // Truthy or Falsy
       expect('' === false).toBeFalsy(); // Truthy or Falsy
     });
 
     it('considers zero to be falsy', function() {
-      expect(0 == true).toBeFalsy(); // Truthy or Falsy
+      expect(0 == false).toBeTruthy(); // Truthy or Falsy
       expect(0 === false).toBeFalsy(); // Truthy or Falsy
     });
 
@@ -117,8 +117,8 @@ describe('the JavaScript language', function() {
       var a = [1, 2, 3];
       var b = [1, 2, 3];
 
-      expect(a !== b).toBeTruthy(); // Truthy or Falsy
-      expect(a != b).toBeTruthy(); // Truthy or Falsy
+      expect(a == b).toBeFalsy(); // Truthy or Falsy
+      expect(a === b).toBeFalsy(); // Truthy or Falsy
     });
 
     it('is not the same to compare by value than by reference ', function() {
@@ -307,10 +307,10 @@ describe('the JavaScript language', function() {
         arg.property = 'test';
       }
 
-      var x = {property: 'cool!'};
+      var x = { property: 'cool!' };
 
       example(x);
-      expect(x).toEqual({property: 'test'});
+      expect(x).toEqual({ property: 'test' });
     });
 
     it('may return a function as the result of invoking a function', function() {
@@ -421,13 +421,11 @@ describe('the JavaScript language', function() {
         address: {
           street: 'sesame'
         },
-        friends: {
-          name: 'triki'
-        }
+        friends: [{ name: 'triki' }]
       };
 
       expect(user.address.street).toEqual('sesame');
-      //expect(user.friends[0].name).toEqual('triki');
+      expect(user.friends[0].name).toEqual('triki');
     });
 
     it('has a pattern called, the Module Pattern', function() {
@@ -452,16 +450,21 @@ describe('the JavaScript language', function() {
     });
 
     it('may create objects also with the module pattern', function() {
-      function createObject(initialScore) {
-        // write the code here
+      function createObject(initialScore, color) {
+        var color = color;
+        var puntos = initialScore;
+        var points = function() {
+          return puntos;
+        };
+        incrementScoreIn = function(num) {
+          puntos += num;
+        };
       }
 
-      /*
-      var obj = createObject(5, 'red');
-      obj.incrementScoreIn(5);
-      expect(obj.color).toEqual('red');
-      expect(obj.points()).toEqual(10);
-      */
+      // var obj = createObject(5, 'red');
+      // obj.incrementScoreIn(5);
+      // expect(obj.color).toEqual('red');
+      // expect(obj.points()).toEqual(10);
     });
 
     it('can define constructors', function() {
@@ -503,8 +506,8 @@ describe('the JavaScript language', function() {
       };
 
       var obj = new Obj();
-      //expect(obj.theName()).toEqual('bob');
-      //expect(obj.theName).toBe(new Obj().theName);
+      expect(obj.theName()).toEqual(this.name);
+      expect(obj.theName).toBe(new Obj().theName);
     });
 
     it('can define a factory', function() {
@@ -520,8 +523,8 @@ describe('the JavaScript language', function() {
       }
 
       var instance = obj();
-      //expect(instance.theName()).toBe();
-      //expect(instance.theName).not.toBe(obj().theName);
+      expect(instance.theName()).toBe('bob');
+      expect(instance.theName).not.toBe(obj().theName);
     });
 
     it('can create methods dynamically on an object instance', function() {
@@ -534,7 +537,7 @@ describe('the JavaScript language', function() {
         };
       }
 
-      //expect(obj.meow()).toEqual();
+      expect(obj.meow()).toEqual('it works');
     });
 
     describe('the polymorphism', function() {
@@ -553,8 +556,8 @@ describe('the JavaScript language', function() {
         Child.prototype = Object.create(Parent.prototype); // prototype chaining
 
         var child = new Child();
-        //expect(child.someMethod()).toEqual();
-        //expect(child.name).toEqual();
+        expect(child.someMethod()).toEqual(10);
+        expect(child.name).toEqual('child');
       });
 
       it('may use the functional inheritance', function() {
@@ -574,7 +577,7 @@ describe('the JavaScript language', function() {
         }
 
         var instance = child();
-        //expect(instance.someMethod()).toBe();
+        expect(instance.someMethod()).toBe(10);
       });
     });
   });
@@ -598,7 +601,7 @@ describe('the JavaScript language', function() {
       myNamespace.addOne();
       myNamespace.addOne();
 
-      //expect(myNamespace.giveMeTheCount()).toBe();
+      expect(myNamespace.giveMeTheCount()).toBe(2);
     });
 
     it('hoists variables the way you probably dont expect', function() {
@@ -612,8 +615,8 @@ describe('the JavaScript language', function() {
         return functions;
       }
 
-      //expect(generate()[0]()).toEqual();
-      //expect(generate()[1]()).toEqual();
+      expect(generate()[0]()).toEqual(5);
+      expect(generate()[1]()).toEqual(5);
     });
   });
 
@@ -671,7 +674,7 @@ describe('the JavaScript language', function() {
         cat.feed();
         cat.feed();
 
-        //expect(cat.kilos).toEqual();
+        expect(cat.kilos).toEqual(3);
       });
 
       it('works different on dettached functions', function() {
@@ -680,15 +683,15 @@ describe('the JavaScript language', function() {
 
         feed();
 
-        //expect(window.kilos).toEqual();
-        //expect(cat.kilos).toEqual();
+        expect(window.kilos).toEqual(11);
+        expect(cat.kilos).toEqual(1);
       });
 
       it('can be bound explicitly with CALL and APPLY', function() {
         var feed = cat.feed;
         feed.apply(cat);
 
-        //expect(cat.kilos).toEqual();
+        expect(cat.kilos).toEqual(2);
       });
 
       it('can be bound in modern browsers with BIND', function() {
@@ -697,7 +700,7 @@ describe('the JavaScript language', function() {
 
         bound();
 
-        //expect(cat.kilos).toEqual();
+        expect(cat.kilos).toEqual(2);
       });
 
       it('works different when function is attached to other object', function() {
@@ -706,8 +709,8 @@ describe('the JavaScript language', function() {
         otherCat.feed = cat.feed;
 
         otherCat.feed();
-        //expect(otherCat.kilos).toEqual();
-        //expect(cat.kilos).toEqual();
+        expect(otherCat.kilos).toEqual(11);
+        expect(cat.kilos).toEqual(1);
       });
 
       it('can be handled using the SELF trick', function() {
@@ -716,7 +719,7 @@ describe('the JavaScript language', function() {
 
         lion.hunt();
 
-        //expect(lion.energy).toEqual();
+        expect(lion.energy).toEqual(185);
       });
 
       it('interprest the THIS when the function is executed', function() {
@@ -728,7 +731,7 @@ describe('the JavaScript language', function() {
         };
         lion.hunt();
 
-        //expect(lion.energy).toEqual();
+        expect(lion.energy).toEqual(4000);
       });
     });
   });
